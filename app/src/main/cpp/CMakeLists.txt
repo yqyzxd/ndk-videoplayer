@@ -15,7 +15,9 @@ add_library( # Sets the name of the library.
         com_wind_ndk_videoplayer_VideoPlayer.cpp
         videoplayer/video_player.cpp
         videoplayer/video_synchronizer.cpp
-        videoplayer/decoder/decoder_params.cpp)
+        videoplayer/decoder/decoder_params.cpp
+        videoplayer/decoder/video_decoder.cpp
+        )
 
 
 
