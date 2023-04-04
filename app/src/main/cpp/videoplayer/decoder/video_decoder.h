@@ -21,7 +21,7 @@ public:
 private:
     DecoderParams* decoderParams;
     AVFormatContext* avFormatCtx;
-
+    int videoStreamIndex;
     int openVideoStream();
     int openVideoStream(int streamIndex);
     std::list<int>* collectStreams(AVMediaType type);

@@ -39,7 +39,7 @@ int VideoDecoder::openVideo() {
 
 int VideoDecoder::openVideoStream() {
     int errCode=-1;
-    int  videoStreamIndex=-1;
+    videoStreamIndex=-1;
     std::list<int>* videoStreams=collectStreams(AVMEDIA_TYPE_VIDEO);
     std::list<int>::iterator iter;
     for (iter = videoStreams->begin(); iter !=videoStreams->end() ; ++iter) {
