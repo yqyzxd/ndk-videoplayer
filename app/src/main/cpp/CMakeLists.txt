@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.22.1)
 project("videoplayer")
 
-set(PATH_TO_PRE_BUILT thirdparty/prebuilt/${ANDROID_ABI})
-include_directories(thirdparty/ffmpeg/include)
+set(PATH_TO_PRE_BUILT ffmpeg/libs/${ANDROID_ABI})
+include_directories(ffmpeg/include)
 
 add_library( # Sets the name of the library.
         videoplayer
@@ -30,4 +30,9 @@ target_link_libraries( # Specifies the target library.
         android
         GLESv2
         EGL
-        log)
+        log
+        # 忽略顺序的方式，导入
+        -Wl,--start-group
+        avcodec avfilter avformat avutil swresample swscale
+        -Wl,--end-group
+        )
