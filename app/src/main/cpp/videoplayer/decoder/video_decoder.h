@@ -10,6 +10,7 @@ extern "C"{
 #include "libavformat/avformat.h"
 };
 #include "decoder_params.h"
+#include "libswresample/swresample.h"
 
 #include <list>
 class VideoDecoder {
@@ -21,10 +22,26 @@ public:
 private:
     DecoderParams* decoderParams;
     AVFormatContext* avFormatCtx;
+    AVCodecContext* videoCodecContext;
+    AVFrame* videoFrame;
     int videoStreamIndex;
+    int width;
+    int height;
+    float fps;
+    float videoTimeBase;
     int openVideoStream();
     int openVideoStream(int streamIndex);
     std::list<int>* collectStreams(AVMediaType type);
+
+    void determineFpsAndTimeBase(AVStream *stream, double defaultTimeBase, float *fps, float *timebase);
+
+    AVCodecContext* audioCodecContext;
+    SwrContext *swrContext;
+    int audioStreamIndex;
+    int openAudioStream();
+    int openAudioStream(int streamIndex);
+
+    bool audioCodecIsSupported(AVCodecContext *pContext);
 };
 
 
