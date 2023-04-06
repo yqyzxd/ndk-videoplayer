@@ -33,6 +33,11 @@ int VideoDecoder::openVideo() {
     int audioErr=openAudioStream();
 
 
+    if (videoErr<0 && audioErr<0){
+        return -1;
+    }
+
+    return 0;
 
 
 
@@ -140,11 +145,30 @@ int VideoDecoder::openAudioStream(int streamIndex) {
     }
     audioCodecContext=codecContext;
 
-    //是否需要resampler
     if (!audioCodecIsSupported(audioCodecContext)){
-
+        swrContext=swr_alloc_set_opts(nullptr, av_get_default_channel_layout(audioCodecContext->channels),AV_SAMPLE_FMT_S16,audioCodecContext->sample_rate,
+                           av_get_default_channel_layout(audioCodecContext->channels),audioCodecContext->sample_fmt,audioCodecContext->sample_rate,0,
+                           nullptr);
+        if (!swrContext || swr_init(swrContext)){
+            if (swrContext){
+                swr_free(&swrContext);
+            }
+            avcodec_free_context(&audioCodecContext);
+            return -1;
+        }
     }
 
+    audioFrame=av_frame_alloc();
+    if (audioFrame== nullptr){
+        if (swrContext){
+            swr_free(&swrContext);
+        }
+        avcodec_free_context(&audioCodecContext);
+        return -1;
+    }
+    audioStreamIndex=streamIndex;
+    determineFpsAndTimeBase(audioStream,0.025,0,&audioTimeBase);
+    return 0;
 
 }
 
@@ -191,6 +215,10 @@ bool VideoDecoder::audioCodecIsSupported(AVCodecContext *audioCodecCtx) {
         return true;
     }
     return false;
+}
+
+void VideoDecoder::close() {
+
 }
 
 

@@ -19,6 +19,9 @@ public:
     VideoDecoder(DecoderParams* decoderParams);
     ~VideoDecoder();
     int openVideo();
+
+    void close();
+
 private:
     DecoderParams* decoderParams;
     AVFormatContext* avFormatCtx;
@@ -37,6 +40,8 @@ private:
 
     AVCodecContext* audioCodecContext;
     SwrContext *swrContext;
+    AVFrame* audioFrame;
+    float audioTimeBase;
     int audioStreamIndex;
     int openAudioStream();
     int openAudioStream(int streamIndex);

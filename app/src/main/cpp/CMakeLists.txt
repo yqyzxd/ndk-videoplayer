@@ -17,6 +17,7 @@ add_library( # Sets the name of the library.
         videoplayer/video_synchronizer.cpp
         videoplayer/decoder/decoder_params.cpp
         videoplayer/decoder/video_decoder.cpp
+        videoplayer/decoder/ffmpeg_video_decoder.cpp
         )
 
 
