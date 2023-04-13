@@ -349,6 +349,6 @@ bool VideoSynchronizer::canDecode() {
 }
 
 void VideoSynchronizer::processDecodingFrame(bool* good, float duration) {
-    std::list<MovieFrame> frames=decoder->decodeFrames(duration,&decodeVideoErrorState);
+    std::list<MovieFrame*>* frames=decoder->decodeFrames(duration,&decodeVideoErrorState);
 
 }
