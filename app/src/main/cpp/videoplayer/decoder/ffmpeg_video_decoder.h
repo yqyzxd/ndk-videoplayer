@@ -7,11 +7,19 @@
 
 
 #include "video_decoder.h"
-
+#include "../texture_uploader/yuv_texture_frame_uploader.h"
 class FFmpegVideoDecoder : public VideoDecoder{
 public :
     FFmpegVideoDecoder(DecoderParams *decoderParams);
     ~FFmpegVideoDecoder();
+
+    virtual TextureFrameUploader *createTextureFrameUploader();
+    virtual float updateTexImage(TextureFrame *textureFrame);
+    virtual bool decodeVideoFrame(AVPacket packet, int *decodeVideoErrorState);
+    virtual bool decodeAudioFrames(AVPacket *packet, std::list<MovieFrame *> *result, float& decodedDuration,
+                                   float minDuration, int *decodeVideoErrorState);
+
+
 };
 
 

@@ -9,15 +9,20 @@ android {
 
     defaultConfig {
         applicationId "com.wind.ndk.videoplayer"
-        minSdk 24
+        minSdk 21
         targetSdk 32
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk{
+            abiFilters("armeabi-v7a")  // apk/lib/libnative-lib.so 指定编译的是此平台
+        }
         externalNativeBuild {
             cmake {
                 cppFlags '-std=c++11'
+                abiFilters "armeabi-v7a" // CMakeLists.txt 指定编译的是此平台
             }
         }
     }

@@ -33,7 +33,7 @@ JNIEXPORT void JNICALL Java_com_wind_ndk_videoplayer_VideoPlayer_nativeSetDataSo
 }
 
 JNIEXPORT void JNICALL Java_com_wind_ndk_videoplayer_VideoPlayer_nativeSurfaceCreated
-        (JNIEnv *env, jobject, jlong handle, jobject surface){
+        (JNIEnv *env, jobject videoplayerobj, jlong handle, jobject surface){
     VideoPlayer* player = reinterpret_cast<VideoPlayer *>(handle);
     ANativeWindow* window=ANativeWindow_fromSurface(env,surface);
     player->setWindow(window);
@@ -41,8 +41,9 @@ JNIEXPORT void JNICALL Java_com_wind_ndk_videoplayer_VideoPlayer_nativeSurfaceCr
 
 
 JNIEXPORT void JNICALL Java_com_wind_ndk_videoplayer_VideoPlayer_nativeSurfaceChanged
-        (JNIEnv *, jobject, jlong, jint, jint){
-
+        (JNIEnv *, jobject, jlong handle, jint w, jint h){
+    VideoPlayer* player = reinterpret_cast<VideoPlayer *>(handle);
+    player->setWindowSize(w,h);
 }
 
 
