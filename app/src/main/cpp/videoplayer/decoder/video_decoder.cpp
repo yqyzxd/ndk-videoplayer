@@ -389,7 +389,8 @@ std::list<MovieFrame *> *VideoDecoder::decodeFrames(float minDuration, int *deco
     }
 
     if (isEof) {
-
+        flushVideoFrames(packet,decodeVideoErrorState);
+        flushAudioFrames(&packet,result,minDuration,decodeVideoErrorState);
     }
 
     return result;
@@ -446,7 +447,7 @@ AudioFrame *VideoDecoder::handleAudioFrame() {
         if (audioCodecContext->sample_fmt != AV_SAMPLE_FMT_S16) {
             return nullptr;
         }
-        audioData = audioFrame->data[0];
+        audioData = (uint8_t *)audioFrame->data[0];
         numFrames = audioFrame->nb_samples;
     }
 
@@ -471,4 +472,41 @@ AudioFrame *VideoDecoder::handleAudioFrame() {
     }
     return frame;
 }
+
+void
+VideoDecoder::flushAudioFrames(AVPacket *packet, std::list<MovieFrame *> *result, float minDuration,
+                               int *decodeVideoErrorState) {
+
+    if(audioCodecContext->codec->capabilities&CODEC_CAP_DELAY){
+        float decodeDuration=0.0f;
+        while(true){
+            packet->data=0;
+            packet->size=0;
+            av_init_packet(packet);
+            int gotFrame=0;
+            int len = avcodec_decode_audio4(audioCodecContext,audioFrame,&gotFrame,packet);
+            if(len<0){
+                *decodeVideoErrorState=1;
+                break;
+            }
+            if (gotFrame){
+                AudioFrame* frame=handleAudioFrame();
+                if (frame!= nullptr){
+                    result->push_back(frame);
+                    position=frame->position;
+                    decodeDuration+=frame->duration;
+                    if (decodeDuration>minDuration){
+                        break;
+                    }
+
+                }
+            }else{
+                isAudioOutputEOF=true;
+                break;
+            }
+        }
+    }
+}
+
+
 

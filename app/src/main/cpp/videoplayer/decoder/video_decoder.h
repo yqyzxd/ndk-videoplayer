@@ -67,6 +67,8 @@ protected:
     void *swrBuffer;
     int swrBufferSize;
     float audioTimeBase;
+    bool isVideoOutputEOF;//视频是否耗尽了
+    bool isAudioOutputEOF;
 private:
 
     UploaderCallback * mUploaderCallback;
@@ -82,7 +84,7 @@ private:
     int height;
     float fps;
     float videoTimeBase;
-    bool isVideoOutputEOF;//视频是否耗尽了
+
 
     long long readLatestFrameTimeMillis;
 
@@ -110,6 +112,11 @@ private:
 
     virtual bool decodeAudioFrames(AVPacket *packet, std::list<MovieFrame *> *result, float& decodedDuration,
                            float minDuration, int *decodeVideoErrorState)=0;
+
+    virtual void flushVideoFrames(AVPacket packet, int *decodeVideoErrorState)=0;
+
+    void flushAudioFrames(AVPacket *packet, std::list<MovieFrame *> *result, float minDuration,
+                          int *decodeVideoErrorState);
 };
 
 

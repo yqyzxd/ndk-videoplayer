@@ -19,7 +19,7 @@ public :
     virtual bool decodeAudioFrames(AVPacket *packet, std::list<MovieFrame *> *result, float& decodedDuration,
                                    float minDuration, int *decodeVideoErrorState);
 
-
+    virtual void flushVideoFrames(AVPacket packet, int *decodeVideoErrorState);
 };
 
 

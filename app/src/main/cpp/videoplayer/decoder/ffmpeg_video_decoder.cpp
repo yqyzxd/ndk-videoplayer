@@ -86,6 +86,28 @@ bool FFmpegVideoDecoder::decodeAudioFrames(AVPacket *packet, std::list<MovieFram
     return finished;
 }
 
+void FFmpegVideoDecoder::flushVideoFrames(AVPacket packet, int *decodeVideoErrorState) {
+    if (videoCodecContext->codec->capabilities & CODEC_CAP_DELAY) {
+        //需要进行空输入以使解码器能正确结束
+        packet.data=0;
+        packet.size=0;
+        av_init_packet(&packet);
+        int gotFrame=0;
+        int len= avcodec_decode_video2(videoCodecContext,videoFrame,&gotFrame,&packet);
+        if (len<0){
+            *decodeVideoErrorState=1;
+        }
+        if (gotFrame){
+            if (videoFrame->interlaced_frame){
+                avpicture_deinterlace((AVPicture*) videoFrame, (AVPicture*) videoFrame, videoCodecContext->pix_fmt, videoCodecContext->width, videoCodecContext->height);
+            }
+            this->uploadTexture();
+        }else{
+            isVideoOutputEOF= true;
+        }
+
+    }
+}
 
 
 
